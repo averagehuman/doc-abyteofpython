@@ -1,0 +1,257 @@
+Chapter 13. Exceptions
+======================
+
+
+
+Exceptions occur when certain exceptional situations occur in your
+program. For example, what if you are going to read a file and the
+file does not exist? Or what if you accidentally deleted it when the
+program was running? Such situations are handled using exceptions.
+
+What if your program had some invalid statements? This is handled by
+Python which raises its hands and tells you there is an error.
+
+Errors
+------
+
+Consider a simple print statement. What if we misspelt print as
+Print? Note the capitalization. In this case, Python raises a syntax
+error.
+
+    >>> Print 'Hello World'
+    File "<stdin>", line 1
+    Print 'Hello World'
+                    ^
+    SyntaxError: invalid syntax
+
+    >>> print 'Hello World'
+    Hello World
+
+Observe   that   a   SyntaxError   is   raised  and  also  the
+location where the error was detected is printed. This is what an
+error handler for this error does.
+
+Try..Except
+~~~~~~~~~~~
+
+We will try to read input from the user. Press Ctrl-d and see what
+happens.
+
+    >>> s = raw_input('Enter something --> ')
+    Enter something --> Traceback (most recent call last):
+    File "<stdin>", line 1, in ?
+    EOFError
+
+Python    raises    an    error    called    EOFError    which
+basically means it found an end of file when it did not expect to
+(which is represented by Ctrl-d)
+
+Next, we will see how to handle such errors.
+
+Handling Exceptions
+~~~~~~~~~~~~~~~~~~~
+
+We  can  handle exceptions using the try..except statement. We
+basically put our usual statements within the try-block and put all
+our error handlers in the except-block.
+
+Example 13.1. Handling Exceptions
+`````````````````````````````````
+
+.. sourcecode:: python
+
+    #!/usr/bin/python
+    # Filename: try_except.py
+
+    import sys
+
+    try:
+    s = raw_input('Enter something --> ')
+    except EOFError:
+    print '\nWhy did you do an EOF on me?'
+    sys.exit() # exit the program
+    except:
+    print '\nSome error/exception occurred.'
+    # here, we are not exiting the program
+
+    print 'Done'
+
+Output
+++++++
+
+.. sourcecode:: bash
+
+    $ python try_except.py
+    Enter something -->
+    Why did you do an EOF on me?
+
+    $ python try_except.py
+    Enter something --> Python is exceptional!
+    Done
+
+How It Works
+++++++++++++
+
+We put all the statements that might raise an error in the try block
+and  then  handle  all the errors and exceptions in the except
+clause/block. The except clause can handle a single specified error
+or exception, or a parenthesized list of errors/exceptions. If no
+names of errors or exceptions are supplied, it will handle all
+errors and exceptions. There has to be at least one except clause
+associated with every try clause.
+
+If any error or exception is not handled, then the default Python
+handler is called which just stops the execution of the program and
+prints a message. We have already seen this in action.
+
+You can also have an else clause associated with a try..catch block.
+The else clause is executed if no exception occurs.
+
+We  can  also get the exception object so that we can retrieve
+additional information about the exception which has occurred. This
+is demonstrated in the next example.
+
+Raising Exceptions
+------------------
+
+You can raise exceptions using the raise statement. You also have to
+specify the name of the error/exception and the exception object
+that  is  to  be thrown along with the exception. The error or
+exception that you can arise should be class which directly or
+indirectly  is a derived class of the Error or Exception class
+respectively.
+
+How To Raise Exceptions
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Example 13.2. How to Raise Exceptions
+`````````````````````````````````````
+
+.. sourcecode:: python
+
+    #!/usr/bin/python
+    # Filename: raising.py
+
+    class ShortInputException(Exception):
+    '''A user-defined exception class.'''
+    def __init__(self, length, atleast):
+            Exception.__init__(self)
+            self.length = length
+            self.atleast = atleast
+
+    try:
+    s = raw_input('Enter something --> ')
+    if len(s) < 3:
+            raise ShortInputException(len(s), 3)
+    # Other work can continue as usual here
+    except EOFError:
+    print '\nWhy did you do an EOF on me?'
+    except ShortInputException, x:
+    print 'ShortInputException: The input was of length %d, \
+            was expecting at least %d' % (x.length, x.atleast)
+    else:
+    print 'No exception was raised.'
+
+Output
+++++++
+
+.. sourcecode:: bash
+
+    $ python raising.py
+    Enter something -->
+    Why did you do an EOF on me?
+
+    $ python raising.py
+    Enter something --> ab
+    ShortInputException: The input was of length 2, was expecting at least
+    3
+
+    $ python raising.py
+    Enter something --> abc
+    No exception was raised.
+
+How It Works
+++++++++++++
+
+Here, we are creating our own exception type although we could've
+used any predefined exception/error for demonstration purposes. This
+new exception type is the ShortInputException class. It has two
+fields - length which is the length of the given input, and atleast
+which is the minimum length that the program was expecting.
+
+In the except clause, we mention the class of error as well as the
+variable to hold the corresponding error/exception object. This is
+analogous to parameters and arguments in a function call. Within
+this particular except clause, we use the length and atleast fields
+of the exception object to print an appropriate message to the user.
+
+Try..Finally
+------------
+
+What if you were reading a file and you wanted to close the file
+whether or not an exception was raised? This can be done using the
+finally block. Note that you can use an except clause along with a
+finally block for the same corresponding try block. You will have to
+embed one within another if you want to use both.
+
+Using Finally
+~~~~~~~~~~~~~
+
+Example 13.3. Using Finally
+```````````````````````````
+
+.. sourcecode:: python
+
+    #!/usr/bin/python
+    # Filename: finally.py
+
+    import time
+
+    try:
+    f = file('poem.txt')
+    while True: # our usual file-reading idiom
+            line = f.readline()
+            if len(line) == 0:
+                    break
+            time.sleep(2)
+            print line,
+    finally:
+    f.close()
+    print 'Cleaning up...closed the file'
+
+Output
+++++++
+
+.. sourcecode:: bash
+
+    $ python finally.py
+    Programming is fun
+    When the work is done
+    Cleaning up...closed the file
+    Traceback (most recent call last):
+    File "finally.py", line 12, in ?
+    time.sleep(2)
+    KeyboardInterrupt
+
+How It Works
+++++++++++++
+
+We do the usual file-reading stuff, but I've arbitrarily introduced
+a way of sleeping for 2 seconds before printing each line using the
+time.sleep method. The only reason is so that the program runs
+slowly (Python is very fast by nature). When the program is still
+running, press Ctrl-c to interrupt/cancel the program.
+
+Observe that a KeyboardInterrupt exception is thrown and the program
+exits, but before the program exits, the finally clause is executed
+and the file is closed.
+
+Summary
+-------
+
+We have discussed the usage of the try..except and try..finally
+statements. We have seen how to create our own exception types and
+how to raise exceptions as well.
+
+Next, we will explore the Python Standard Library.
+

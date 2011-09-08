@@ -1,0 +1,174 @@
+Chapter 12. Input/Output
+========================
+
+
+There will be lots of times when you want your program to interact
+with the user (which could be yourself). You would want to take
+input from the user and then print some results back. We can achieve
+this using the raw_input and print statements respectively. For
+output, we can also use the various methods of the str (string)
+class. For example, you can use the rjust method to get a string
+which is right justified to a specified width. See help(str) for
+more details.
+
+Another common type of input/output is dealing with files. The
+ability  to  create, read and write files is essential to many
+programs and we will explore this aspect in this chapter.
+
+Files
+-----
+
+You can open and use files for reading or writing by creating an
+object of the file class and using its read, readline or write
+methods appropriately to read from or write to the file. The ability
+to read or write to the file depends on the mode you have specified
+for the file opening. Then finally, when you are finished with the
+file, you call the close method to tell Python that we are done
+using the file.
+
+Using file
+~~~~~~~~~~
+
+Example 12.1. Using files
+`````````````````````````
+
+.. sourcecode:: python
+
+    #!/usr/bin/python
+    # Filename: using_file.py
+
+    poem = '''\
+    Programming is fun
+    When the work is done
+    if you wanna make your work also fun:
+        use Python!
+    '''
+
+    f = file('poem.txt', 'w') # open for 'w'riting
+    f.write(poem) # write text to file
+    f.close() # close the file
+
+    f = file('poem.txt') # if no mode is specified, 'r'ead mode is assumed
+    by default
+    while True:
+        line = f.readline()
+        if len(line) == 0: # Zero length indicates EOF
+                break
+        print line, # Notice comma to avoid automatic newline added by
+    Python
+    f.close() # close the file
+
+Output
+++++++
+
+.. sourcecode:: bash
+
+    $ python using_file.py
+    Programming is fun
+    When the work is done
+    if you wanna make your work also fun:
+        use Python!
+
+How It Works
+++++++++++++
+
+First, we create an instance of the file class by specifying the
+name of the file and the mode in which we want to open the file. The
+mode can be a read mode ('r'), write mode ('w') or append mode
+('a'). There are actually many more modes available and help(file)
+will give you more details about them.
+
+We first open the file in write mode and use the write method of the
+file class to write to the file and then we finally close the file.
+
+Next, we open the same file again for reading. If we don't specify a
+mode, then the read mode is the default one. We read in each line of
+the file using the readline method, in a loop. This method returns a
+complete line including the newline character at the end of the
+line. So, when an empty string is returned, it indicates that the
+end of the file has been reached and we stop the loop.
+
+Notice that we use a comma with the print statement to suppress the
+automatic newline that the print statement adds because the line
+that is read from the file already ends with a newline character.
+Then, we finally close the file.
+
+Now, see the contents of the poem.txt file to confirm that the
+program has indeed worked properly.
+
+Pickle
+------
+
+Python provides a standard module called pickle using which you can
+store any Python object in a file and then get it back later intact.
+This is called storing the object persistently.
+
+There is another module called cPickle which functions exactly same
+as the pickle module except that it is written in the C language and
+is (upto 1000 times) faster. You can use either of these modules,
+although we will be using the cPickle module here. Remember though,
+that we refer to both these modules as simply the pickle module.
+
+Pickling and Unpickling
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Example 12.2. Pickling and Unpickling
+`````````````````````````````````````
+
+.. sourcecode:: python
+
+    #!/usr/bin/python
+    # Filename: pickling.py
+
+    import cPickle as p
+    #import pickle as p
+
+    shoplistfile = 'shoplist.data' # the name of the file where we will sto
+    re the object
+
+    shoplist = ['apple', 'mango', 'carrot']
+
+    # Write to the file
+    f = file(shoplistfile, 'w')
+    p.dump(shoplist, f) # dump the object to a file
+    f.close()
+
+    del shoplist # remove the shoplist
+
+    # Read back from the storage
+    f = file(shoplistfile)
+    storedlist = p.load(f)
+    print storedlist
+
+Output
+++++++
+
+.. sourcecode:: bash
+
+    $ python pickling.py
+    ['apple', 'mango', 'carrot']
+
+How It Works
+++++++++++++
+
+First, notice that we use the import..as syntax. This is handy since
+we can use a shorter name for a module. In this case, it even allows
+us to switch to a different module (cPickle or pickle) by simply
+changing one line! In the rest of the program, we simply refer to
+this module as p.
+
+To store an object in a file, first we open a file object in write
+mode and store the object into the open file by calling the dump
+function of the pickle module. This process is called pickling.
+
+Next, we retrieve the object using the load function of the pickle
+module which returns the object. This process is called unpickling.
+
+Summary
+-------
+
+We  have discussed various types of input/output and also file
+handling and using the pickle module.
+
+Next, we will explore the concept of exceptions.
+

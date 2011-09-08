@@ -1,0 +1,251 @@
+Chapter 15. More Python
+=======================
+
+
+Till now, we have covered majority of the various aspects of Python
+that you will use. In this chapter, we will cover some more aspects
+that will make our knowledge of Python more complete.
+
+Special Methods
+---------------
+
+There are certain special methods which have special significance in
+classes such as the __init__ and __del__ methods whose significance
+we have already seen.
+
+Generally, special methods are used to mimic certain behavior. For
+example, if you want to use the x[key] indexing operation for your
+class (just like you use for lists and tuples) then just implement
+the __getitem__() method and your job is done. If you think about
+it, this is what Python does for the list class itself!
+
+Some useful special methods are listed in the following table. If
+you want to know about all the special methods, then a huge list is
+available in the Python Reference Manual.
+
+Table 15.1. Some Special Methods
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Name Explanation
+    __init__(self, ...) This method is called just before the newly
+    created object is returned for usage.
+    __del__(self) Called just before the object is destroyed
+    __str__(self) Called when we use the print statement with the object
+    or when str() is used.
+    __lt__(self, other) Called when the less than operator ( < ) is
+    used. Similarly, there are special methods for all the operators (+,
+    >, etc.)
+    __getitem__(self, key) Called when x[key] indexing operation is
+    used.
+    __len__(self) Called when the built-in len() function is used for
+    the sequence object.
+
+Single Statement Blocks
+-----------------------
+
+By  now,  you should have firmly understood that each block of
+statements is set apart from the rest by its own indentation level.
+Well, this is true for the most part but it is not 100% accurate. If
+your block of statements contains only one single statement, then
+you can specify it on the same line of, say, a conditional statement
+or looping statement. The following example should make this clear:
+
+    >>> flag = True
+    >>> if flag: print 'Yes'
+    ...
+    Yes
+
+As   we  can  see,  the  single  statement  is  used  in-place
+and not as a separate block. Although, you can use this for making
+your program smaller, I strongly recommend that you do not use this
+short-cut method except for error checking, etc. One major reason is
+that it will be much easier to add an extra statement if you are
+using proper indentation.
+
+Also notice that when the Python interpreter is used in interactive
+mode,  it  helps  you enter the statements by changing prompts
+appropriately. In the aboe case, after you entered the keyword if,
+it changes the prompt to ... to indicate that the statement is not
+yet complete. When we do complete the statement in this manner, we
+press enter to confirm that the statement is complete. Then, Python
+finishes executing the whole statement and returns to the old prompt
+waiting for the next input.
+
+List Comprehension
+------------------
+
+List comprehensions are used to derive a new list from an existing
+list. For example, you have a list of numbers and you want to get a
+corresponding list with all the numbers multiplied by 2 but only
+when the number itself is greater than 2. List comprehensions are
+ideal for such situations.
+
+Using List Comprehensions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Example 15.1. Using List Comprehensions
+```````````````````````````````````````
+
+.. sourcecode:: python
+
+    #!/usr/bin/python
+    # Filename: list_comprehension.py
+
+    listone = [2, 3, 4]
+    listtwo = [2*i for i in listone if i > 2]
+    print listtwo
+
+Output
+++++++
+
+.. sourcecode:: bash
+
+    $ python list_comprehension.py
+    [6, 8]
+
+How It Works
+++++++++++++
+
+Here, we derive a new list by specifying the manipulation to be done
+(2*i) when some condition is satisfied (if i > 2). Note that the
+original list remains unmodified. Many a time, we use loops to
+process each element of a list, the same can be achieved using list
+comprehensions in a more precise, compact and explicit manner.
+
+Receiving Tuples and Lists in Functions
+---------------------------------------
+
+There is a special way of receiving parameters to a function as a
+tuple or a dictionary using the * or ** prefix respectively. This is
+useful when taking variable number of arguments in the function.
+
+    >>> def powersum(power, \*args):
+    ...     '''Return the sum of each argument raised to specified power.''
+    '
+    ...     total = 0
+    ...     for i in args:
+    ...             total += pow(i, power)
+    ...     return total
+    ...
+    >>> powersum(2, 3, 4)
+    25
+
+    >>> powersum(2, 10)
+    100
+
+Due   to  the  \*  prefix  on  the  args  variable,  all  extra
+arguments passed to the function are stored in args as a tuple. If a
+\*\* prefix had been used instead, the extra parameters would be
+considered to be key/value pairs of a dictionary.
+
+Lambda Forms
+------------
+
+A lambda statement is used to create new function objects and then
+return them at runtime.
+
+Using Lambda Forms
+~~~~~~~~~~~~~~~~~~
+
+Example 15.2. Using Lambda Forms
+````````````````````````````````
+
+    #!/usr/bin/python
+    # Filename: lambda.py
+
+    def make_repeater(n):
+        return lambda s: s * n
+
+    twice = make_repeater(2)
+
+    print twice('word')
+    print twice(5)
+
+Output
+++++++
+
+.. sourcecode:: bash
+
+    $ python lambda.py
+    wordword
+    10
+
+How It Works
+++++++++++++
+
+Here, we use a function make_repeater to create new function objects
+at runtime and return it. A lambda statement is used to create the
+function object. Essentially, the lambda takes a parameter followed
+by a single expression only which becomes the body of the function
+and the value of this expression is returned by the new function.
+Note that even a print statement cannot be used inside a lambda
+form, only expressions.
+
+The exec and eval statements
+----------------------------
+
+The exec statement is used to execute Python statements which are
+stored in a string or file. For example, we can generate a string
+containing Python code at runtime and then execute these statements
+using the exec statement. A simple example is shown below.
+
+    >>> exec 'print "Hello World"'
+    Hello World
+
+The   eval   statement   is  used  to  evaluate  valid  Python
+expressions which are stored in a string. A simple example is shown
+below.
+
+    >>> eval('2*3')
+    6
+
+The assert statement
+--------------------
+
+The assert statement is used to assert that something is true. For
+example,  if you are very sure that you will have at least one
+element in a list you are using and want to check this, and raise an
+error if it is not true, then assert statement is ideal in this
+situation. When the assert statement fails, an AssertionError is
+raised.
+
+    >>> mylist = ['item']
+    >>> assert len(mylist) >= 1
+    >>> mylist.pop()
+    'item'
+    >>> assert len(mylist) >= 1
+    Traceback (most recent call last):
+    File "<stdin>", line 1, in ?
+    AssertionError
+
+The repr function
+-----------------
+
+The  reprt  function  is  used  to  obtain  a canonical string
+representation of the object. Backticks (also called conversion or
+reverse  quotes)  do  the  same thing. Note that you will have
+eval(repr(object)) == object most of the time.
+
+    >>> i = []
+    >>> i.append('item')
+    >>> `i`
+    "['item']"
+    >>> repr(i)
+    "['item']"
+
+Basically,   the   repr   function   or   the   backticks  are
+used to obtain a printable representation of the object. you can
+control what your objects return for the repr function by defining
+the __repr__ method in your class.
+
+Summary
+-------
+
+We have covered some more features of Python in this chapter and yet
+you can be sure we haven't covered all the features of Python.
+However, at this stage, we have covered most of what you are ever
+going to use in practice. This is sufficient for you to get started
+with whatever programs you are going to create.
+
+Next, we will discuss how to explore Python further.
+

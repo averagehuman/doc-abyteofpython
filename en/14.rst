@@ -1,0 +1,204 @@
+Chapter 14. The Python Standard Library
+=======================================
+
+
+The  Python  Standard  Library  is available with every Python
+installation. It contains a huge number of very useful modules. It
+is important that you become familiar with the Python Standard
+Library since most of your problems can be solved more easily and
+quickly if you are familiar with this library of modules.
+
+We will explore some of the commonly used modules in this library.
+You can find complete details for all of the modules in the Python
+Standard  Library  in  the  'Library Reference' section in the
+documentation that comes with your Python installation.
+
+The sys module
+--------------
+
+The sys module contains system-specific functionality. we have
+already  seen that the sys.argv list contains the command-line
+arguments.
+
+Command Line Arguments
+~~~~~~~~~~~~~~~~~~~~~~
+
+Example 14.1. Using sys.argv
+````````````````````````````
+
+.. sourcecode:: python
+
+    #!/usr/bin/python
+    # Filename: cat.py
+
+    import sys
+
+    def readfile(filename):
+        '''Print a file to the standard output.'''
+        f = file(filename)
+        while True:
+                line = f.readline()
+                if len(line) == 0:
+                    break
+                print line, # notice comma
+        f.close()
+
+    # Script starts from here
+    if len(sys.argv) < 2:
+        print 'No action specified.'
+        sys.exit()
+
+    if sys.argv[1].startswith('--'):
+        option = sys.argv[1][2:]
+        # fetch sys.argv[1] but without the first two characters
+        if option == 'version':
+                print 'Version 1.2'
+        elif option == 'help':
+                print '''\
+    This program prints files to the standard output.
+    Any number of files can be specified.
+    Options include:
+    --version : Prints the version number
+    --help    : Display this help'''
+        else:
+                print 'Unknown option.'
+        sys.exit()
+    else:
+        for filename in sys.argv[1:]:
+                readfile(filename)
+
+Output
+++++++
+
+.. sourcecode:: bash
+
+    $ python cat.py
+    No action specified.
+
+    $ python cat.py --help
+    This program prints files to the standard output.
+    Any number of files can be specified.
+    Options include:
+    --version : Prints the version number
+    --help    : Display this help
+
+    $ python cat.py --version
+    Version 1.2
+
+    $ python cat.py --nonsense
+    Unknown option.
+
+    $ python cat.py poem.txt
+    Programming is fun
+    When the work is done
+    if you wanna make your work also fun:
+        use Python!
+
+How It Works
+++++++++++++
+
+This program tries to mimic the cat command familiar to Linux/Unix
+users. You just speicfy the names of some text files and it will
+print them to the output.
+
+When a Python program is run i.e. not an interactive mode, there is
+always at least one item in the sys.argv list which is the name of
+the current program being run and is available as sys.argv[0] since
+Python starts counting from 0. Other command line arguments follow
+this item.
+
+To make the program user-friendly we have supplied certain options
+that the user can specify to learn more about the program. We use
+the first argument to check if any options have been specified to
+our program. If the --version option is used, the version number of
+the  program  is printed. Similarly, when the --help option is
+specified, we give a bit of explanation about the program. We make
+use of the sys.exit function to exit the running program. As always,
+see help(sys.exit) for more details.
+
+When  no options are specified and filenames are passed to the
+program, it simply prints out each line of each file, one after the
+other in the order specified on the command line.
+
+As  an  aside,  the name cat is short for concatenate which is
+basically  what this program does - it can print out a file or
+attach/concatenate two or more files together in the output.
+
+More sys
+~~~~~~~~
+
+The sys.version string gives you information about the version of
+Python that you have installed. The sys.version_info tuple gives an
+easier  way  of enabling Python-version specific parts of your
+program.
+
+::
+    [swaroop@localhost code]$ python
+    >>> import sys
+    >>> sys.version
+    '2.3.4 (#1, Oct 26 2004, 16:42:40) \n[GCC 3.4.2 20041017 (Red Hat 3.4.2
+    -6.fc3)]'
+    >>> sys.version_info
+    (2, 3, 4, 'final', 0)
+
+For     experienced     programmers,     other     items    of
+interest  in  the sys module include sys.stdin, sys.stdout and
+sys.stderr which correspond to the standard input, standard output
+and standard error streams of your program respectively.
+
+The os module
+-------------
+
+This module represents generic operating system functionality. This
+module is especially important if you want to make your programs
+platform-independent i.e. it allows the program to be written such
+that it will run on Linux as well as Windows without any problems
+and without requiring changes. An example of this is using the
+os.sep  variable instead of the operation system-specific path
+separator.
+
+Some of the more useful parts of the os module are listed below Most
+of them are self-explanatory.
+
+* The os.name string specifies which platform you are using, such
+  as 'nt' for Windows and 'posix' for Linux/Unix users.
+* The os.getcwd() function gets the current working directory i.e.
+  the path of the directory from which the curent Python script is
+  working.
+* The os.getenv() and os.putenv() functions are used to get and
+  set environment variables respectively.
+* The os.listdir() function returns the name of all files and
+  directories in the specified directory.
+* The os.remove() function is used to delete a file.
+* The os.system() function is used to run a shell command.
+* The os.linesep string gives the line terminator used in the
+  current platform. For example, Windows uses '\r\n', Linux uses
+  '\n' and Mac uses '\r'.
+* The os.path.split() function returns the directory name and file
+  name of the path.
+
+::
+
+    >>> os.path.split('/home/swaroop/byte/code/poem.txt')
+    ('/home/swaroop/byte/code', 'poem.txt')
+
+* The os.path.isfile() and the
+  os.path.isdir() functions check if the given path refers to a
+  file or directory respectively. Similarly, the os.path.exists()
+  function is used to check if a given path actually exists.
+
+You can explore the Python Standard Documentation for more details
+on these functions and variables. You can use help(sys), etc. as
+well.
+
+Summary
+-------
+
+We have seen some of the functionality of the sys module and sys
+modules in the Python Standard Library. You should explore the
+Python Standard Documentation to find out more about these and other
+modules as well.
+
+Next, we will cover various aspects of Python that will make our
+tour of Python more complete.
+
